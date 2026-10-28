@@ -231,6 +231,9 @@ if [ "${AGY_SWAP_SKIP_SYNC:-0}" != "1" ] && [ -n "$swap_command" ] && [ -x "$swa
   "$swap_command" --sync-session >/dev/null 2>&1 || true
 fi
 export WSL_INTEROP="${WSL_INTEROP:-1}"
+if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+  /usr/bin/security delete-generic-password -a antigravity -s gemini >/dev/null 2>&1 || true
+fi
 ` + execBlock + `
 status=$?
 if [ "${AGY_SWAP_SKIP_SYNC:-0}" != "1" ] && [ -n "$swap_command" ] && [ -x "$swap_command" ]; then
@@ -312,7 +315,7 @@ func (a *Application) ensureAgyLauncherGuardForPath(agyBin string) {
 	if !strings.HasPrefix(text, "#!") || (!strings.Contains(text, ".local/libexec/agy") && !strings.Contains(text, "Managed by agy-swap session guard")) {
 		return
 	}
-	if strings.Contains(text, "--sync-session") && strings.Contains(text, "WSL_INTEROP") && !strings.Contains(text, "python3 -") {
+	if strings.Contains(text, "--sync-session") && strings.Contains(text, "WSL_INTEROP") && strings.Contains(text, "delete-generic-password") && !strings.Contains(text, "python3 -") {
 		return
 	}
 	skipPerms := strings.Contains(text, "AGY_NORMAL_MODE") || strings.Contains(text, "--dangerously-skip-permissions")

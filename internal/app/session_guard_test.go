@@ -240,8 +240,8 @@ func TestEnsureAgyLauncherGuardWrapsAndUpgradesAgyBinary(t *testing.T) {
 			t.Fatal(err)
 		}
 		wrapper := string(wrapperBytes)
-		if !strings.Contains(wrapper, "--sync-session") || !strings.Contains(wrapper, "WSL_INTEROP") {
-			t.Fatalf("expected wrapper to invoke --sync-session and export WSL_INTEROP, got:\n%s", wrapper)
+		if !strings.Contains(wrapper, "--sync-session") || !strings.Contains(wrapper, "WSL_INTEROP") || !strings.Contains(wrapper, "delete-generic-password") {
+			t.Fatalf("expected wrapper to invoke --sync-session, export WSL_INTEROP, and delete conflicting Keychain item, got:\n%s", wrapper)
 		}
 	})
 
@@ -289,8 +289,8 @@ exit "$status"
 		if !strings.Contains(wrapper, "AGY_NORMAL_MODE") || !strings.Contains(wrapper, "--dangerously-skip-permissions") {
 			t.Fatalf("expected AGY_NORMAL_MODE behavior to be preserved, got:\n%s", wrapper)
 		}
-		if !strings.Contains(wrapper, "--sync-session") || !strings.Contains(wrapper, "WSL_INTEROP") {
-			t.Fatalf("expected upgraded wrapper to invoke --sync-session and export WSL_INTEROP, got:\n%s", wrapper)
+		if !strings.Contains(wrapper, "--sync-session") || !strings.Contains(wrapper, "WSL_INTEROP") || !strings.Contains(wrapper, "delete-generic-password") {
+			t.Fatalf("expected upgraded wrapper to invoke --sync-session, export WSL_INTEROP, and delete conflicting Keychain item, got:\n%s", wrapper)
 		}
 	})
 }

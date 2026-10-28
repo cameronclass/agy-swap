@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -96,6 +97,10 @@ func (a *Application) cmdRunNow(ctx context.Context, opts extendedOptions, posit
 		if err := a.prepareBoundRun(ctx, settings, opts.Profile); err != nil {
 			return a.extendedError("run now", opts, err)
 		}
+	}
+
+	if runtime.GOOS == "darwin" && a.credentials != nil && a.credentials.useFileSessionStore() {
+		_ = a.credentials.Delete(ctx)
 	}
 
 	cmd := exec.CommandContext(ctx, path, opts.RunArgs...)
